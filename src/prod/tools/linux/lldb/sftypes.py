@@ -15,34 +15,29 @@ def wstring_SummaryProvider(obj, dict):
     result='"'
     e = lldb.SBError()
 
-    first = obj.GetChildMemberWithName('__r_').GetChildMemberWithName('__first_') 
+    first = obj.GetChildMemberWithName('__r_').GetChildMemberWithName('__first_')
     l = first.GetChildMemberWithName('__l')
     bufferAddr = l.GetChildMemberWithName('__data_').GetValueAsUnsigned()
     wcharCount = l.GetChildMemberWithName('__size_').GetValueAsUnsigned()
 
-    if bufferAddr > 8 and wcharCount > 0 :
-        byteCount = wcharCount * 2 
+    if bufferAddr > 8 and wcharCount > 0:
+        byteCount = wcharCount * 2
         content = obj.process.ReadMemory(bufferAddr, byteCount, e)
-        if not e.success :
-            result = e.description
-            return result 
-        
+        if not e.success:
+            return e.description
         for i in range(wcharCount):
             byteIdx = i * 2
             result += content[byteIdx]
-    else :
+    else:
         s = first.GetChildMemberWithName('__s')
         size = s.GetChildMemberWithName('__size_').GetData().GetUnsignedInt8(e, 0)
 
-        if e.success :
-            if size > 0 :
-                data = s.GetChildMemberWithName('__data_').GetData()
-                for i in range(0, size, 2) :
-                    result += chr(data.uint8[i])
-        else :
-            result = e.description
-            return result 
-
+        if not e.success:
+            return e.description
+        if size > 0 :
+            data = s.GetChildMemberWithName('__data_').GetData()
+            for i in range(0, size, 2) :
+                result += chr(data.uint8[i])
     result+='"'
     return result
 

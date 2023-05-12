@@ -135,7 +135,7 @@ def findtype (typename):
     print
 
 
-def findtypes_in_region(region, names) : 
+def findtypes_in_region(region, names): 
 
     sys.stdout.write('+')
     sys.stdout.flush()
@@ -144,7 +144,7 @@ def findtypes_in_region(region, names) :
     endAddr = region[1]
     #print '[{0:x},{1:x})'.format(startAddr, endAddr)
 
-    matches = dict()
+    matches = {}
 
     error = lldb.SBError()
     for addr in range(startAddr, endAddr, PointerByteSize):
@@ -161,18 +161,18 @@ def findtypes_in_region(region, names) :
     return matches
 
 
-def type_regex_to_vtable_regex(typename) :
+def type_regex_to_vtable_regex(typename):
     if len(typename) == 0 :
         return '^vtable for'
 
-    if typename[0] == '^' :
-        return '^vtable for ' + typename[1:]
+    if typename[0] == '^':
+        return f'^vtable for {typename[1:]}'
 
-    return '^vtable for .*' + typename
+    return f'^vtable for .*{typename}'
 
 
-def get_all_pure_virtual_funcs() :
-    result = dict()
+def get_all_pure_virtual_funcs():
+    result = {}
     symbolCtxList = lldb.target.FindSymbols('__cxa_pure_virtual')
     for ctx in symbolCtxList :
         symbol = ctx.symbol

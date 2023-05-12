@@ -14,8 +14,7 @@ os.chdir(scriptDir)
 
 def GetOutputLines(cmd):
     output = commands.getstatusoutput(cmd)
-    if output[0] != 0: return [] 
-    return output[1].splitlines()
+    return [] if output[0] != 0 else output[1].splitlines()
 
 gsResult = GetOutputLines("git status -s *.h")
 
